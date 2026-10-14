@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pin Profit Checker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF9F3;--card:#fff;--ink:#2B2B33;--mut:#6B6B78;--line:#E8DCCF;--ruby:#B5314C;--teal:#2F5D62;--gold:#E8B54A;--soft:#FBEBC5;--good:#2E7D5B;--warn:#B5651D;--bad:#B5314C;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17161B;--card:#222127;--ink:#F3EEE8;--mut:#A8A4AE;--line:#37353D;--ruby:#E5617D;--teal:#7FB8BE;--gold:#E8B54A;--soft:#3A3322;--good:#6CCB9D;--warn:#F0A55A;--bad:#E5617D;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17161B;--card:#222127;--ink:#F3EEE8;--mut:#A8A4AE;--line:#37353D;--ruby:#E5617D;--teal:#7FB8BE;--gold:#E8B54A;--soft:#3A3322;--good:#6CCB9D;--warn:#F0A55A;--bad:#E5617D;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Poppins,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+.wrap{max-width:780px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:30px;margin:8px 0 4px;color:var(--ruby);line-height:1.15}
+h2{font-size:18px;margin:0 0 4px}
+.sub{color:var(--mut);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:16px}
+.step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--ruby);color:#fff;font-weight:700;font-size:13px;margin-right:8px}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 4px}
+input,select{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:0 12px}
+@media(max-width:560px){.grid3{grid-template-columns:repeat(2,1fr)}}
+.hint{font-size:12px;color:var(--mut);margin-top:4px}
+button{font:inherit;font-weight:600;border:0;border-radius:12px;padding:12px 18px;cursor:pointer;background:var(--ruby);color:#fff;font-size:15px}
+a.ghost{display:inline-block;padding:12px 18px;border:1px solid var(--line);border-radius:12px;color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button.sm{padding:6px 10px;font-size:12px;border-radius:8px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.note{background:var(--soft);border-radius:12px;padding:12px 14px;font-size:13px;margin:12px 0 0}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+@media(max-width:560px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+.tile b{display:block;font-size:22px;color:var(--teal)}
+.tile span{font-size:12px;color:var(--mut)}
+.leak{border-left:6px solid var(--ruby);background:var(--bg);border-radius:12px;padding:14px 16px;margin:12px 0}
+.leak.good{border-color:var(--good)}.leak.warn{border-color:var(--warn)}
+.leak h3{margin:0 0 4px;font-size:16px}
+.acts label{display:flex;gap:10px;align-items:flex-start;font-weight:500;margin:8px 0;font-size:14px}
+.acts input{width:20px;height:20px;margin-top:2px;flex:none}
+.pin{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}
+.pin .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.pin .nm{font-weight:600;word-break:break-word}
+.chip{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:3px 10px;margin-top:6px;border:1px solid currentColor}
+.chip.win{color:var(--good)}.chip.early,.chip.clicks,.chip.nodata{color:var(--warn)}.chip.ctr,.chip.conv{color:var(--bad)}
+.stats{font-size:13px;color:var(--mut);margin-top:6px}
+.tip{font-size:14px;margin-top:6px}
+.ideas{display:grid;gap:8px;margin-top:10px}
+.idea{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px}
+.empty{color:var(--mut);text-align:center;padding:18px}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:10px 0 4px}
+.bar i{display:block;height:100%;background:var(--good);width:0;transition:width .3s}
+.chk label{display:flex;gap:10px;align-items:flex-start;font-weight:500;margin:12px 0;font-size:14px}
+.chk input{width:20px;height:20px;margin-top:2px;flex:none}
+.chk small{display:block;color:var(--mut);font-weight:400;font-size:12px}
+.sug{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12px;background:var(--bg);border-radius:8px;padding:6px 8px;margin-top:6px;font-weight:500}
+.srch{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:14px;margin-top:8px}
+.kw{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;margin:8px 6px 0 0}
+.kw b{cursor:pointer;color:var(--mut)}
+a{color:var(--teal)}
+footer{font-size:12px;color:var(--mut);margin-top:24px}
+#msg{color:var(--bad);font-size:13px;min-height:18px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Pin Profit Checker</h1>
+<p class="sub">Type a few numbers from Pinterest. Get plain-English suggestions on what to fix next.</p>
+
+<section class="card">
+<h2><span class="step">1</span>Your Pinterest</h2>
+<p class="hint" style="margin:0 0 4px">This tool can't log into Pinterest, so you type in the numbers yourself. Your data stays in this browser.</p>
+<div class="grid">
+<div><label for="user">Pinterest username</label><input id="user" placeholder="e.g. yourname or your profile link" autocomplete="off" autocapitalize="none" spellcheck="false" name="pin-handle"></div>
+<div><label for="niche">Your topic or niche</label><input id="niche" placeholder="e.g. meal prep" autocomplete="off"></div>
+</div>
+<div class="hint" id="userNote" role="status" style="margin-top:6px;color:var(--warn)"></div>
+<label for="goal">What do you want most?</label>
+<select id="goal"><option value="both">More clicks and more sales</option><option value="clicks">More clicks to my website</option><option value="sales">More sales or sign-ups</option></select>
+<div class="row"><button id="saveProfile">Save</button><span class="hint" style="align-self:center">Saves automatically as you type.</span><a id="profileLink" class="ghost" style="display:none"></a></div>
+<p class="note" id="where">Where to find your numbers: open Pinterest Analytics, then look at <b>Impressions</b>, <b>Saves</b> and <b>Outbound clicks</b> for each pin. Sales come from your shop or affiliate dashboard. <a href="https://analytics.pinterest.com/" target="_blank" rel="noopener">Open Pinterest Analytics</a></p>
+</section>
+
+<section class="card">
+<h2><span class="step">2</span>Profile checklist<span id="who"></span></h2>
+<p class="hint" style="margin:0">You tick these yourself, because this page can't see inside your account.</p>
+<div class="bar"><i id="bar"></i></div><div class="hint" id="barTxt"></div>
+<div class="chk" id="chk"></div>
+</section>
+
+<section class="card">
+<h2><span class="step">3</span>Find your keywords</h2>
+<p class="hint" style="margin:0">Open a search, then note the suggestions Pinterest shows as you type and the topic bubbles under the results. Add good phrases to your list.</p>
+<div id="srch"></div>
+<div class="row"><a class="ghost" href="https://trends.pinterest.com/" target="_blank" rel="noopener">Check Pinterest Trends</a></div>
+<label for="kwIn">My keyword list</label>
+<div class="grid"><input id="kwIn" placeholder="Type a phrase you found"><div><button id="kwAdd" style="width:100%">Add phrase</button></div></div>
+<div id="kws"></div>
+</section>
+
+<section class="card">
+<h2><span class="step">4</span>Add a pin</h2>
+<label for="pname">Pin name (anything that helps you remember it)</label>
+<input id="pname" placeholder="e.g. 5 easy lunch ideas pin">
+<div class="grid3">
+<div><label for="imp">Impressions</label><input id="imp" type="number" min="0" inputmode="numeric"></div>
+<div><label for="sav">Saves</label><input id="sav" type="number" min="0" inputmode="numeric"></div>
+<div><label for="clk">Outbound clicks</label><input id="clk" type="number" min="0" inputmode="numeric"></div>
+<div><label for="sal">Sales / sign-ups <span class="hint">(optional)</span></label><input id="sal" type="number" min="0" inputmode="numeric"></div>
+<div><label for="earn">Money earned <span class="hint">(optional)</span></label><input id="earn" type="number" min="0" step="any" inputmode="decimal"></div>
+</div>
+<div id="msg" role="alert"></div>
+<div class="row"><button id="addPin">Add pin</button><button class="ghost" id="example">Try with example data</button><button class="ghost" id="clear">Clear everything</button></div>
+</section>
+
+<section class="card" id="results">
+<h2><span class="step">5</span>Your suggestions</h2>
+<div id="out"></div>
+</section>
+
+<section class="card">
+<h2><span class="step">6</span>Title ideas for your topic</h2>
+<p class="hint" style="margin:0">Pick your topic or one of your saved phrases. Only claim results or experience you really have.</p>
+<select id="ideaBase" style="margin-top:10px"></select>
+<div class="ideas" id="ideas"></div>
+</section>
+
+<footer>Suggestions are starter guidance, not guarantees or industry benchmarks. As you add more pins, the checker compares each pin with your own average. Not affiliated with Pinterest. Check Pinterest's current rules and your local advertising rules, including affiliate disclosure.</footer>
+</div>
+<script>
+const KEY='pinchecker.v1';
+let S={profile:{user:'',niche:'',goal:'both'},pins:[],done:{},check:{},kws:[]};
+try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);if(o&&o.pins)S=Object.assign(S,o)}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct=x=>(x*100).toFixed(1)+'%';
+const nv=v=>(v===''||v==null||isNaN(parseFloat(v)))?null:Math.max(0,parseFloat(v));
+const med=a=>{const s=[...a].sort((x,y)=>x-y),m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2};
+function userInfo(raw){
+ raw=String(raw).trim();
+ if(!raw)return{u:'',note:''};
+ if(/pin\.it\//i.test(raw))return{u:'',note:'That is a short Pinterest link. Please paste your full profile link or just your username.'};
+ let u=raw;
+ if(/^https?:\/\//i.test(raw)||/pinterest\./i.test(raw))u=raw.replace(/^https?:\/\//i,'').replace(/^([a-z]+\.)?pinterest\.[a-z.]+\//i,'');
+ u=u.replace(/^@/,'').split(/[\/?#]/)[0];
+ if(/\s/.test(u))return{u:'',note:'That has spaces, so it looks like a display name. Pinterest usernames have no spaces. Paste your profile link, or the part after pinterest.com/.'};
+ if(!/^[A-Za-z0-9_.\-]{2,40}$/.test(u))return{u:'',note:'That does not look like a Pinterest username.'};
+ return{u,note:u!==raw?'Reading this as @'+u+'.':''};
+}
+const cleanUser=s=>userInfo(s).u;
+
+const TIPS={
+ early:{label:'Too early to judge',tip:'Under 100 impressions so far. Give it a couple of weeks and add the numbers again.'},
+ ctr:{label:'Fix the pin: low click-through',tip:'People see it but don\'t click. Try bigger text, a clearer benefit in the headline, and a new design of the same idea.'},
+ clicks:{label:'Need more clicks to judge',tip:'Good start. You need about 30 clicks before the sales numbers mean much.'},
+ nodata:{label:'Add your sales number',tip:'This pin has enough clicks. Add sales or sign-ups to see whether your page converts.'},
+ conv:{label:'Fix the page or offer',tip:'People click but don\'t buy. Make the page headline match the pin, put one clear button at the top, and add an email sign-up.'},
+ win:{label:'Working well: make more like it',tip:'Make 3 new designs with the same keyword and destination, and publish them over the next few days.'}
+};
+const ACTIONS={
+ early:['Keep publishing fresh pins with your main keyword in the title and description','Put the keyword in the board name and board description too','Check back in 2 weeks and add updated numbers','Use Pinterest search suggestions to find phrases people actually type'],
+ ctr:['Use large, simple text that is readable on a phone','Rewrite the headline with one clear benefit','Make 2-3 new designs of your best idea with different colors','Use a 2:3 vertical image (for example 1000 x 1500 px)','Make sure the pin promises exactly what the page delivers'],
+ clicks:['Publish 3 more pins for the keyword that is already getting clicks','Pin to the most relevant boards','Add pins to your older posts that have no pins yet','Wait until you have about 30 clicks per pin before judging sales'],
+ nodata:['Add sales or sign-ups for pins that have 30+ clicks','Check your shop or affiliate dashboard for the real numbers','Make sure every link is tracked so you can match sales to pins'],
+ conv:['Make the page headline echo the pin headline','Put one clear button or link near the top of the page','Test the page on your phone: speed, clutter, readability','Add an email sign-up so browsers can come back later','Click every link yourself to make sure it works and is tracked','Be honest about who it\'s for, and disclose affiliate links clearly'],
+ win:['Make 3 variations of your best pin (new image, same keyword)','Pin your best performer to 2-3 more relevant boards','Write a related post or page and pin that too','Keep a note of what this pin did differently']
+};
+const IDEAS=['Best {n} Tips for Beginners','How to Start {n} (Beginner Guide)','{n}: 7 Mistakes to Avoid','Free {n} Checklist (Printable)','{n} Ideas You Can Try This Week','The Beginner\'s Guide to {n}','Simple {n} Plan for Busy People','What to Know Before You Start {n}','{n} Tools Worth Trying','How to Get Better at {n} Without Overwhelm'];
+
+function th(){
+ const ok=S.pins.filter(p=>p.imp>=100),ctrs=ok.map(p=>p.clk/p.imp);
+ const cv=S.pins.filter(p=>p.clk>=30&&p.sal!=null).map(p=>p.sal/p.clk);
+ return{ctr:ctrs.length>=3?0.8*med(ctrs):0.005,conv:cv.length>=3?0.8*med(cv):0.01,rel:ctrs.length>=3};
+}
+function verdict(p,t){
+ if(p.imp<100)return'early';
+ if(p.clk/p.imp<t.ctr)return'ctr';
+ if(p.clk<30)return'clicks';
+ if(p.sal==null)return'nodata';
+ if(p.sal/p.clk<t.conv)return'conv';
+ return'win';
+}
+function overall(t){
+ const T={imp:0,sav:0,clk:0,sal:0,earn:0,hasSal:false};
+ S.pins.forEach(p=>{T.imp+=p.imp;T.sav+=p.sav||0;T.clk+=p.clk;if(p.sal!=null){T.sal+=p.sal;T.hasSal=true}T.earn+=p.earn||0});
+ let tag;
+ if(T.imp<300)tag='early';
+ else if(T.clk/T.imp<t.ctr)tag='ctr';
+ else if(T.clk<30)tag='clicks';
+ else if(!T.hasSal)tag='nodata';
+ else if(T.sal/T.clk<t.conv)tag='conv';
+ else tag='win';
+ return{T,tag};
+}
+function render(){
+ const o=$('out');
+ if(!S.pins.length){o.innerHTML='<div class="empty">Add your first pin above (or try the example data) and your suggestions will appear here.</div>';return}
+ const t=th(),{T,tag}=overall(t),g=S.profile.goal;
+ const heads={early:['Not enough data yet','warn'],ctr:['Your biggest leak: people see your pins but don\'t click','' ],clicks:['You\'re getting clicks, but not enough to judge sales yet','warn'],nodata:['Add your sales numbers to see your next leak','warn'],conv:['Your biggest leak: people click but don\'t buy',''],win:['Looking healthy: time to do more of what works','good']};
+ const [h,cls]=heads[tag];
+ const goalNote=g==='clicks'?'Since you want more clicks, focus on pin design and headlines first.':g==='sales'?'Since you want more sales, make sure your page and offer are strong before making more pins.':'';
+ let html=`<div class="tiles"><div class="tile"><b>${T.imp.toLocaleString()}</b><span>Impressions</span></div><div class="tile"><b>${pct(T.imp?T.clk/T.imp:0)}</b><span>Click-through rate</span></div><div class="tile"><b>${pct(T.imp?T.sav/T.imp:0)}</b><span>Save rate</span></div><div class="tile"><b>${T.hasSal&&T.clk?pct(T.sal/T.clk):'-'}</b><span>Click-to-sale rate</span></div></div>`;
+ html+=`<div class="leak ${cls}"><h3>${esc(h)}</h3><div class="tip">${esc(TIPS[tag].tip)} ${esc(goalNote)}</div></div>`;
+ html+=`<h2 style="margin-top:16px">Do this next${cleanUser(S.profile.user)?' for @'+esc(cleanUser(S.profile.user)):''}</h2><div class="acts">`+ACTIONS[tag].map((a,i)=>{const k=tag+'-'+i;return`<label><input type="checkbox" data-k="${k}" ${S.done[k]?'checked':''}><span>${esc(a)}</span></label>`}).join('')+`</div>`;
+ html+=`<p class="hint">${t.rel?'Pins are compared with your own average.':'Using starter thresholds until you add 3 pins with 100+ impressions. After that, pins are compared with your own average.'}</p>`;
+ html+=`<h2 style="margin-top:16px">Pin by pin</h2>`+S.pins.map(p=>{
+  const v=verdict(p,t),ctr=p.clk/p.imp,sv=p.sav!=null?p.sav/p.imp:null,cv=(p.sal!=null&&p.clk)?p.sal/p.clk:null,epc=(p.earn!=null&&p.clk)?p.earn/p.clk:null;
+  return`<div class="pin"><div class="top"><div><div class="nm">${esc(p.name)}</div><span class="chip ${v}">${esc(TIPS[v].label)}</span></div><button class="ghost sm" data-del="${p.id}">Remove</button></div><div class="stats">${p.imp.toLocaleString()} impressions &middot; CTR ${pct(ctr)}${sv!=null?' &middot; save rate '+pct(sv):''}${cv!=null?' &middot; click-to-sale '+pct(cv):''}${epc!=null?' &middot; '+epc.toFixed(2)+' per click':''}</div><div class="tip">${esc(TIPS[v].tip)}</div></div>`}).join('');
+ html+=`<div class="row"><button class="ghost" id="copy">Copy my report</button></div>`;
+ o.innerHTML=html;
+ o.querySelectorAll('[data-k]').forEach(c=>c.onchange=()=>{S.done[c.dataset.k]=c.checked;save()});
+ o.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{S.pins=S.pins.filter(p=>p.id!=b.dataset.del);save();render()});
+ $('copy').onclick=()=>{
+  const txt=`Pin Profit Checker report${S.profile.user?' for @'+cleanUser(S.profile.user):''}\nImpressions ${T.imp}, CTR ${pct(T.imp?T.clk/T.imp:0)}, save rate ${pct(T.imp?T.sav/T.imp:0)}\n${h}\nNext steps:\n- `+ACTIONS[tag].join('\n- ');
+  const done=()=>{$('copy').textContent='Copied!'};
+  try{navigator.clipboard.writeText(txt).then(done,()=>{$('copy').textContent='Copy not allowed here'})}catch(e){$('copy').textContent='Copy not allowed here'}};
+}
+let baseSel='';
+function renderIdeas(){
+ const n=S.profile.niche.trim(),opts=[n,...S.kws].filter(Boolean),sel=$('ideaBase'),el=$('ideas');
+ if(!opts.length){sel.style.display='none';el.innerHTML='<div class="empty">Add your topic in step 1 to see title ideas.</div>';return}
+ sel.style.display='block';
+ if(!opts.includes(baseSel))baseSel=opts[0];
+ sel.innerHTML=opts.map(o=>`<option ${o===baseSel?'selected':''}>${esc(o)}</option>`).join('');
+ sel.onchange=()=>{baseSel=sel.value;renderIdeas()};
+ el.innerHTML=IDEAS.map(i=>{const t=i.replace('{n}',baseSel);return`<div class="idea"><span>${esc(t)}</span><button class="ghost sm" data-c="${esc(t)}">Copy</button></div>`}).join('');
+ el.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{try{navigator.clipboard.writeText(b.dataset.c).then(()=>{b.textContent='Copied'})}catch(e){}});
+}
+function renderChecklist(){
+ const u=cleanUser(S.profile.user),n=S.profile.niche.trim(),N=n?n.charAt(0).toUpperCase()+n.slice(1):'';
+ $('who').textContent=u?' for @'+u:'';
+ const items=[
+ ['biz','Switch to a free business account','This is the usual way to unlock Pinterest Analytics.',null],
+ ['claim','Claim your website','Connects your site to your profile so pins from it are linked to you.',null],
+ ['name','Put your topic in your profile name',n?'Try this:':'Add your topic in step 1 for a personalised example.',n?(u||'Your name')+' | '+N+' ideas and tips':null],
+ ['bio','Write a bio with your topic and who it helps',n?'Try this:':'Add your topic in step 1 for an example.',n?'Helping [who you help] with '+n+'. Free guides, checklists and ideas.':null],
+ ['boards','Give every board a clear, keyword-rich title',n?'Try these:':'Use plain, searchable names.',n?N+' ideas  |  '+N+' tips for beginners  |  '+N+' printables':null],
+ ['bdesc','Add a description to each board','Put your main keyword in the first sentence.',null],
+ ['pins','Link every pin to a real page that keeps its promise','A pin that matches its page gets more clicks and fewer disappointed visitors.',null]];
+ const done=items.filter(i=>S.check[i[0]]).length;
+ $('bar').style.width=(done/items.length*100)+'%';$('barTxt').textContent=done+' of '+items.length+' done';
+ const el=$('chk');
+ el.innerHTML=items.map(i=>`<label><input type="checkbox" data-ck="${i[0]}" ${S.check[i[0]]?'checked':''}><span>${esc(i[1])}<small>${esc(i[2])}</small>${i[3]?`<span class="sug"><span>${esc(i[3])}</span><button type="button" class="ghost sm" data-cp="${esc(i[3])}">Copy</button></span>`:''}</span></label>`).join('');
+ el.querySelectorAll('[data-ck]').forEach(c=>c.onchange=()=>{S.check[c.dataset.ck]=c.checked;save();renderChecklist()});
+ el.querySelectorAll('[data-cp]').forEach(b=>b.onclick=e=>{e.preventDefault();try{navigator.clipboard.writeText(b.dataset.cp).then(()=>{b.textContent='Copied'})}catch(x){}});
+}
+function renderSearch(){
+ const n=S.profile.niche.trim(),el=$('srch');
+ if(!n){el.innerHTML='<div class="empty">Add your topic in step 1 to get search shortcuts.</div>';return}
+ const q=[n,n+' ideas',n+' for beginners','best '+n,n+' tips','how to '+n,n+' checklist',n+' printable'];
+ el.innerHTML=q.map(x=>`<div class="srch"><span>${esc(x)}</span><a class="ghost" style="padding:6px 10px;font-size:12px" target="_blank" rel="noopener" href="https://www.pinterest.com/search/pins/?q=${encodeURIComponent(x)}">Search on Pinterest</a></div>`).join('');
+}
+function renderKws(){
+ $('kws').innerHTML=S.kws.length?S.kws.map((k,i)=>`<span class="kw">${esc(k)} <b data-rk="${i}" title="Remove">&times;</b></span>`).join(''):'<div class="hint">No phrases yet.</div>';
+ $('kws').querySelectorAll('[data-rk]').forEach(b=>b.onclick=()=>{S.kws.splice(+b.dataset.rk,1);save();renderKws();renderIdeas()});
+}
+function addKw(){const v=$('kwIn').value.trim();if(!v||S.kws.includes(v)||S.kws.length>=40)return;S.kws.push(v);$('kwIn').value='';save();renderKws();renderIdeas()}
+$('kwAdd').onclick=addKw;$('kwIn').onkeydown=e=>{if(e.key==='Enter')addKw()};
+function updateLink(){
+ const i=userInfo($('user').value),a=$('profileLink');$('userNote').textContent=i.note;
+ if(i.u){a.style.display='inline-block';a.href='https://www.pinterest.com/'+encodeURIComponent(i.u)+'/';a.target='_blank';a.rel='noopener';a.textContent='Open pinterest.com/'+i.u}else a.style.display='none';
+}
+function renderProfile(){$('user').value=S.profile.user;$('niche').value=S.profile.niche;$('goal').value=S.profile.goal;updateLink()}
+function applyProfile(){S.profile={user:$('user').value,niche:$('niche').value,goal:$('goal').value};save();updateLink();renderChecklist();renderSearch();renderIdeas();render()}
+$('saveProfile').onclick=applyProfile;
+['user','niche'].forEach(id=>$(id).addEventListener('input',applyProfile));$('goal').addEventListener('change',applyProfile);
+$('addPin').onclick=()=>{
+ const imp=nv($('imp').value),clk=nv($('clk').value),msg=$('msg');msg.textContent='';
+ if(imp==null||imp<=0){msg.textContent='Enter the impressions (more than 0).';return}
+ if(clk==null){msg.textContent='Enter the outbound clicks (0 is fine).';return}
+ if(clk>imp){msg.textContent='Clicks can\'t be higher than impressions. Please check the numbers.';return}
+ const sal=nv($('sal').value);
+ if(sal!=null&&sal>clk){msg.textContent='Sales can\'t be higher than clicks. Please check the numbers.';return}
+ S.pins.push({id:Date.now(),name:$('pname').value.trim()||'Pin '+(S.pins.length+1),imp,sav:nv($('sav').value),clk,sal,earn:nv($('earn').value)});
+ ['pname','imp','sav','clk','sal','earn'].forEach(i=>$(i).value='');
+ save();render();$('results').scrollIntoView({behavior:'smooth'});
+};
+$('example').onclick=()=>{S.pins=[{id:1,name:'Example: 5 easy lunch ideas',imp:4200,sav:120,clk:25,sal:null,earn:null},{id:2,name:'Example: beginner meal prep guide',imp:3100,sav:150,clk:90,sal:1,earn:12},{id:3,name:'Example: free weekly planner',imp:2600,sav:70,clk:78,sal:6,earn:40},{id:4,name:'Example: new pin from today',imp:60,sav:2,clk:1,sal:null,earn:null}];S.done={};save();render()};
+$('clear').onclick=()=>{if(confirm('Remove all pins and checks?')){S.pins=[];S.done={};save();render()}};
+renderProfile();renderChecklist();renderSearch();renderKws();renderIdeas();render();
+</script>
+</body>
+</html>
